@@ -1,4 +1,5 @@
 import http from 'http'
+import escapeHtml from 'escape-html'
 
 type TestDataResponse = {
   _res: http.ServerResponse
@@ -47,11 +48,11 @@ export function createTestDataServer(
     const response: TestDataResponse = {
       _res: res,
       resolve(value?: string) {
-        res.end(value === undefined ? key : value)
+        res.end(value === undefined ? escapeHtml(key) : value)
       },
       reject(error: Error, status?: number) {
         res.statusCode = status ?? 500
-        res.end(error.message ?? `Failed to fetch data for "${key}"`)
+        res.end(error.message ?? `Failed to fetch data for "${escapeHtml(key)}"`)
       },
     }
 

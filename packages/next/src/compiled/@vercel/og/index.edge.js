@@ -14530,6 +14530,7 @@ var $a = k((mo) => {
     let n = t.pop();
     for (let r of t)
       for (let i in r) {
+        if (!Object.prototype.hasOwnProperty.call(r, i) || i === "__proto__" || i === "constructor") continue;
         let o = n(e[i], r[i]);
         o === void 0 ? hr(e[i]) && hr(r[i]) ? e[i] = mr(e[i], r[i], n) : e[i] = r[i] : e[i] = o;
       }

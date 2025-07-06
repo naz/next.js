@@ -33,7 +33,13 @@ export type ErrorsProps = {
 type ReadyErrorEvent = ReadyRuntimeError
 
 function isNextjsLink(text: string): boolean {
-  return text.startsWith('https://nextjs.org')
+  try {
+    const url = new URL(text);
+    const allowedHosts = ['nextjs.org', 'www.nextjs.org'];
+    return allowedHosts.includes(url.host);
+  } catch {
+    return false; // Return false if the URL is invalid
+  }
 }
 
 function ErrorDescription({

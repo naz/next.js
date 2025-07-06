@@ -3805,9 +3805,17 @@ async function prerenderToStream(
         err !== null &&
         'message' in err &&
         typeof err.message === 'string' &&
-        err.message.includes(
-          'https://nextjs.org/docs/advanced-features/static-html-export'
-        ))
+        (() => {
+          try {
+            const url = new URL('https://nextjs.org/docs/advanced-features/static-html-export');
+            return (
+              url.hostname === 'nextjs.org' &&
+              url.pathname === '/docs/advanced-features/static-html-export'
+            );
+          } catch {
+            return false;
+          }
+        })())
     ) {
       // Ensure that "next dev" prints the red error overlay
       throw err

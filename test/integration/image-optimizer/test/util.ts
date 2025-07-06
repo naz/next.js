@@ -40,8 +40,14 @@ export async function serveSlowImage() {
   const port = await findPort()
   const server = http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, 'http://localhost')
-    const delay = Number(parsedUrl.searchParams.get('delay')) || 500
+    let delay = Number(parsedUrl.searchParams.get('delay')) || 500
     const status = Number(parsedUrl.searchParams.get('status')) || 200
+
+    if (delay > 1000) {
+      res.statusCode = 400
+      res.end('Bad request: delay exceeds maximum allowed value.')
+      return
+    }
 
     console.log('delaying image for', delay)
     await waitFor(delay)

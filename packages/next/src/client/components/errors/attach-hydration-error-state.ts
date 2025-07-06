@@ -10,9 +10,14 @@ import {
 export function attachHydrationErrorState(error: Error) {
   if (
     isHydrationError(error) &&
-    !error.message.includes(
-      'https://nextjs.org/docs/messages/react-hydration-error'
-    )
+    (() => {
+      try {
+        const url = new URL('https://nextjs.org/docs/messages/react-hydration-error');
+        return error.message.includes(url.href) && url.host === 'nextjs.org';
+      } catch {
+        return false;
+      }
+    })()
   ) {
     const reactHydrationDiffSegments = getReactHydrationDiffSegments(
       error.message

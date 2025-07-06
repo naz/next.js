@@ -21,6 +21,11 @@ const PetPage = ({ pet }: Props) => {
   const handleDelete = async () => {
     const petID = router.query.id;
 
+    if (typeof petID !== "string" || !/^[a-fA-F0-9]{24}$/.test(petID)) {
+      setMessage("Invalid pet ID.");
+      return;
+    }
+
     try {
       await fetch(`/api/pets/${petID}`, {
         method: "Delete",

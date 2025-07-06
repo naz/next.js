@@ -11,6 +11,7 @@ import { loadEnvConfig, type LoadedEnvFiles } from '@next/env'
 import { bold, yellow } from '../lib/picocolors'
 import crypto from 'crypto'
 import { makeRe } from 'next/dist/compiled/picomatch'
+import { escapeRegExp } from 'lodash'
 import { existsSync, promises as fs } from 'fs'
 import os from 'os'
 import { Worker } from '../lib/worker'
@@ -1010,8 +1011,11 @@ export default async function build(
         `^${MIDDLEWARE_FILENAME}\\.(?:${config.pageExtensions.join('|')})$`
       )
 
+      const sanitizedPageExtensions = config.pageExtensions.map((ext) =>
+        escapeRegExp(ext)
+      )
       const instrumentationHookDetectionRegExp = new RegExp(
-        `^${INSTRUMENTATION_HOOK_FILENAME}\\.(?:${config.pageExtensions.join(
+        `^${INSTRUMENTATION_HOOK_FILENAME}\\.(?:${sanitizedPageExtensions.join(
           '|'
         )})$`
       )

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { validatePreview } from "../../lib/api";
+import escapeHtml from "escape-html";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
   });
 
   if (validationResp.error) {
-    return res.status(401).end(`${validationResp.message}`);
+    return res.status(401).end(escapeHtml(`${validationResp.message}`));
   }
 
   // Enable Draft Mode by setting the cookie

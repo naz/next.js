@@ -12,7 +12,10 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET" /* Get a model by its ID */:
       try {
-        const pet = await Pet.findById(id);
+        if (typeof id !== "string") {
+          return res.status(400).json({ success: false, message: "Invalid ID format" });
+        }
+        const pet = await Pet.findOne({ _id: { $eq: id } });
         if (!pet) {
           return res.status(400).json({ success: false });
         }
@@ -24,7 +27,10 @@ export default async function handler(req, res) {
 
     case "PUT" /* Edit a model by its ID */:
       try {
-        const pet = await Pet.findByIdAndUpdate(id, req.body, {
+        if (typeof id !== "string") {
+          return res.status(400).json({ success: false, message: "Invalid ID format" });
+        }
+        const pet = await Pet.findOneAndUpdate({ _id: { $eq: id } }, req.body, {
           new: true,
           runValidators: true,
         });
@@ -39,7 +45,10 @@ export default async function handler(req, res) {
 
     case "DELETE" /* Delete a model by its ID */:
       try {
-        const deletedPet = await Pet.deleteOne({ _id: id });
+        if (typeof id !== "string") {
+          return res.status(400).json({ success: false, message: "Invalid ID format" });
+        }
+        const deletedPet = await Pet.deleteOne({ _id: { $eq: id } });
         if (!deletedPet) {
           return res.status(400).json({ success: false });
         }

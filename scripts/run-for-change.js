@@ -177,9 +177,19 @@ async function main() {
       console.log(changedDirectories.join('\n'))
       return
     }
-    const cmd = spawn(execArgs[0], execArgs.slice(1))
-    cmd.stdout.pipe(process.stdout)
-    cmd.stderr.pipe(process.stderr)
+    const allowedCommands = ['npm', 'yarn', 'git']; // Example allowlist
+    if (!allowedCommands.includes(execArgs[0])) {
+      throw new Error(`Invalid command: ${execArgs[0]}`);
+    }
+    const sanitizedArgs = execArgs.slice(1).map(arg => {
+      if (typeof arg !== 'string' || arg.includes(';') || arg.includes('&')) {
+        throw new Error(`Invalid argument: ${arg}`);
+      }
+      return arg;
+    });
+    const cmd = spawn(execArgs[0], sanitizedArgs);
+    cmd.stdout.pipe(process.stdout);
+    cmd.stderr.pipe(process.stderr);
 
     await new Promise((resolve, reject) => {
       cmd.on('exit', (code) => {

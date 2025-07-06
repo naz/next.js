@@ -24,6 +24,12 @@ const Form = ({ formId, petForm, forNewPet = true }) => {
   const putData = async (form) => {
     const { id } = router.query;
 
+    // Validate the `id` parameter
+    if (!/^[a-fA-F0-9]{24}$/.test(id)) { // Example: Validate as a MongoDB ObjectId
+      setMessage("Invalid pet ID");
+      return;
+    }
+
     try {
       const res = await fetch(`/api/pets/${id}`, {
         method: "PUT",

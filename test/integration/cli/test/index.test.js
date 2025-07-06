@@ -386,7 +386,7 @@ describe('CLI Usage', () => {
         stdout: true,
       })
       expect(output.stdout).toMatch(
-        new RegExp(`Next\\.js v${pkg.version.replace(/\./g, '\\.')}`)
+        new RegExp(`Next\\.js v${pkg.version.replace(/\\/g, '\\\\').replace(/\./g, '\\.')}`)
       )
     })
 
@@ -395,7 +395,7 @@ describe('CLI Usage', () => {
         stdout: true,
       })
       expect(output.stdout).toMatch(
-        new RegExp(`Next\\.js v${pkg.version.replace(/\./g, '\\.')}`)
+        new RegExp(`Next\\.js v${pkg.version.replace(/\\/g, '\\\\').replace(/\./g, '\\.')}`)
       )
     })
 

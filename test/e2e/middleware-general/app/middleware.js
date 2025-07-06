@@ -186,6 +186,9 @@ export async function middleware(request) {
   }
 
   if (url.pathname.endsWith('/root-subrequest')) {
+    if (!isValidUrl(url)) {
+      return serializeError(new Error('Invalid URL'))
+    }
     const res = await fetch(url)
     res.headers.set('x-dynamic-path', 'true')
     return res
@@ -271,4 +274,38 @@ function serializeError(error) {
 
 function withLocalIp(url) {
   return String(url).replace('localhost', '127.0.0.1')
+}
+
+function isValidUrl(url) {
+  const allowedHostnames = ['example.com', '127.0.0.1'];
+  const allowedSchemes = ['http', 'https'];
+  const hostname = url.hostname;
+  const pathname = url.pathname;
+  const scheme = url.protocol.replace(':', '');
+
+  // Check if hostname is in the allow-list
+  if (!allowedHostnames.includes(hostname)) {
+    return false;
+  }
+
+  // Check if scheme is in the allow-list
+  if (!allowedSchemes.includes(scheme)) {
+    return false;
+  }
+
+  // Check for path traversal in pathname
+  if (pathname.includes('..')) {
+    return false;
+  }
+
+  // Check for malicious query parameters
+  const queryParams = url.searchParams;
+  const maliciousPattern = /(\.\.|%2E%2E|<script>|<\/script>|' OR |--|;|%3C|%3E)/i;
+  for (const [key, value] of queryParams) {
+    if (maliciousPattern.test(key) || maliciousPattern.test(value)) {
+      return false;
+    }
+  }
+
+  return true;
 }

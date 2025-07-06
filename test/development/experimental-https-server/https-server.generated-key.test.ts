@@ -1,5 +1,7 @@
 import { nextTestSetup } from 'e2e-utils'
 import https from 'https'
+import fs from 'fs'
+import path from 'path'
 import { renderViaHTTP, shouldRunTurboDevTest } from 'next-test-utils'
 
 describe('experimental-https-server (generated certificate)', () => {
@@ -19,7 +21,7 @@ describe('experimental-https-server (generated certificate)', () => {
   }
 
   const agent = new https.Agent({
-    rejectUnauthorized: false,
+    ca: [fs.readFileSync(path.join(__dirname, 'test-ca.pem'))],
   })
 
   it('should successfully load the app in app dir', async () => {

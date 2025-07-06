@@ -34,6 +34,25 @@ import { PARALLEL_ROUTE_DEFAULT_PATH } from '../../../../client/components/paral
 import type { Compilation } from 'webpack'
 import { createAppRouteCode } from './create-app-route-code'
 
+const charMap = {
+  '<': '\\u003C',
+  '>': '\\u003E',
+  '/': '\\u002F',
+  '\\': '\\\\',
+  '\b': '\\b',
+  '\f': '\\f',
+  '\n': '\\n',
+  '\r': '\\r',
+  '\t': '\\t',
+  '\0': '\\0',
+  '\u2028': '\\u2028',
+  '\u2029': '\\u2029',
+}
+
+function escapeUnsafeChars(str: string): string {
+  return str.replace(/[<>\b\f\n\r\t\0\u2028\u2029]/g, (x) => charMap[x] || x)
+}
+
 export type AppLoaderOptions = {
   name: string
   page: string
@@ -773,9 +792,9 @@ const nextAppLoader: AppLoader = async function nextAppLoader() {
       : // Lazily evaluate the imported modules in the generated code
         collectedDeclarations
           .map(([varName, modulePath]) => {
-            return `const ${varName} = () => import(/* webpackMode: "eager" */ ${JSON.stringify(
+            return `const ${varName} = () => import(/* webpackMode: "eager" */ ${escapeUnsafeChars(JSON.stringify(
               modulePath
-            )});\n`
+            ))});\n`
           })
           .join('')
 

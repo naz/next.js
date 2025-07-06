@@ -12,7 +12,11 @@ export default function Page() {
       id="click-me"
       onClick={(e) => {
         e.preventDefault()
-        router[method](invalidLink)
+        if (['push', 'replace'].includes(method) && typeof router[method] === 'function') {
+          router[method](invalidLink)
+        } else {
+          console.error(`Invalid method: ${method}`);
+        }
       }}
     >
       invalid link :o

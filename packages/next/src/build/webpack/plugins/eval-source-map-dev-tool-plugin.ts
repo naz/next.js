@@ -19,6 +19,25 @@ import type { RawSourceMap } from 'next/dist/compiled/source-map'
 
 const cache = new WeakMap<webpack.sources.Source, webpack.sources.Source>()
 
+const charMap = {
+  '<': '\\u003C',
+  '>': '\\u003E',
+  '/': '\\u002F',
+  '\\': '\\\\',
+  '\b': '\\b',
+  '\f': '\\f',
+  '\n': '\\n',
+  '\r': '\\r',
+  '\t': '\\t',
+  '\0': '\\0',
+  '\u2028': '\\u2028',
+  '\u2029': '\\u2029',
+};
+
+function escapeUnsafeChars(str: string): string {
+  return str.replace(/[<>\b\f\n\r\t\0\u2028\u2029]/g, (x) => charMap[x]);
+}
+
 const devtoolWarningMessage = `/*
  * ATTENTION: An "eval-source-map" devtool has been used.
  * This devtool is neither made for production nor for readable output files.
@@ -214,14 +233,16 @@ export default class EvalSourceMapDevToolPlugin {
               ).toString('base64')}`
             )}\n//# sourceURL=webpack-internal:///${moduleId}\n` // workaround for chrome bug
 
+            const sanitizedContentFooter = escapeUnsafeChars(content + footer);
+
             return result(
               new RawSource(
                 `eval(${
                   compilation.outputOptions.trustedTypes
                     ? `${RuntimeGlobals.createScript}(${JSON.stringify(
-                        content + footer
+                        sanitizedContentFooter
                       )})`
-                    : JSON.stringify(content + footer)
+                    : JSON.stringify(sanitizedContentFooter)
                 });`
               )
             )

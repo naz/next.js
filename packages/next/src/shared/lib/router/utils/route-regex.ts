@@ -172,8 +172,10 @@ function getParametrizedRoute(
     }
   }
 
+  const sanitizedRoute = escapeStringRegexp(segments.join(''))
+
   return {
-    parameterizedRoute: segments.join(''),
+    parameterizedRoute: sanitizedRoute,
     groups,
   }
 }
@@ -202,8 +204,10 @@ export function getRouteRegex(
     re += '(?:/)?'
   }
 
+  const sanitizedRe = escapeStringRegexp(re)
+
   return {
-    re: new RegExp(`^${re}$`),
+    re: new RegExp(`^${sanitizedRe}$`),
     groups: groups,
   }
 }

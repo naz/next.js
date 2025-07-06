@@ -78,7 +78,7 @@ export async function proxyRequest(
   const detached = new DetachedPromise<boolean>()
 
   proxy.on('error', (err) => {
-    console.error(`Failed to proxy ${target}`, err)
+    console.error('Failed to proxy', target, err)
     if (!finished) {
       finished = true
       detached.reject(err)

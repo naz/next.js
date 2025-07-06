@@ -31,7 +31,7 @@ describe.each([
 
   const agent = useHttps
     ? new https.Agent({
-        rejectUnauthorized: false,
+        // Use default certificate validation
       })
     : undefined
 

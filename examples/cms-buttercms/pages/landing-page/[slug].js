@@ -52,7 +52,7 @@ export async function getStaticProps({ params }) {
       props: { page: camelcaseKeys(page), blogPosts: camelcaseKeys(blogPosts) },
     };
   } catch (e) {
-    console.error(`Couldn't load content for Landing page ${params.slug}.`, e);
+    console.error("Couldn't load content for Landing page %s.", params.slug, e);
 
     return {
       notFound: true,

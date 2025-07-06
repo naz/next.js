@@ -73,6 +73,10 @@ async function trackAnalytics(
   schemaId: number,
   records: DevlowMetric[],
 ): Promise<void> {
+  const allowedHosts = ["https://trusted-snowflake.com", "https://another-trusted-host.com"];
+  if (!allowedHosts.some((host) => batchUri.startsWith(host))) {
+    throw new Error(`Invalid batchUri: ${batchUri}. Must match one of the allowed hosts.`);
+  }
   try {
     const res = await fetch(batchUri, {
       method: "POST",

@@ -244,8 +244,24 @@ module.exports = async function addComment(
         : {}),
     }
 
+    const allowedEndpoints = [
+      'https://api.github.com',
+      'https://custom-trusted-endpoint.com',
+    ]
+
     if (actionInfo.customCommentEndpoint) {
       logger(`Using body ${JSON.stringify({ ...body, body: 'OMITTED' })}`)
+    }
+
+    const isValidEndpoint = allowedEndpoints.some((base) =>
+      actionInfo.commentEndpoint.startsWith(base)
+    )
+
+    if (!isValidEndpoint) {
+      logger.error(
+        `Invalid comment endpoint: ${actionInfo.commentEndpoint}. Skipping request.`
+      )
+      return
     }
 
     try {

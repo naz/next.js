@@ -245,7 +245,7 @@ class CraTransform {
         hasChildren = false
         serializedAttrs += ` dangerouslySetInnerHTML={{ __html: \`${gatherTextChildren(
           element.children
-        ).replace(/`/g, '\\`')}\` }}`
+        ).replace(/\\/g, '\\\\').replace(/`/g, '\\`')}\` }}`
       }
 
       serializedHeadTags.push(

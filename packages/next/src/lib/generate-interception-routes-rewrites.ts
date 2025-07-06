@@ -1,4 +1,5 @@
 import { pathToRegexp } from 'next/dist/compiled/path-to-regexp'
+import _ from 'lodash'
 import { NEXT_URL } from '../client/components/app-router-headers'
 import {
   extractInterceptionRouteInformation,
@@ -32,11 +33,11 @@ export function generateInterceptionRoutesRewrites(
         extractInterceptionRouteInformation(appPath)
 
       const normalizedInterceptingRoute = `${
-        interceptingRoute !== '/' ? toPathToRegexpPath(interceptingRoute) : ''
+        interceptingRoute !== '/' ? toPathToRegexpPath(_.escapeRegExp(interceptingRoute)) : ''
       }/(.*)?`
 
-      const normalizedInterceptedRoute = toPathToRegexpPath(interceptedRoute)
-      const normalizedAppPath = toPathToRegexpPath(appPath)
+      const normalizedInterceptedRoute = toPathToRegexpPath(_.escapeRegExp(interceptedRoute))
+      const normalizedAppPath = toPathToRegexpPath(_.escapeRegExp(appPath))
 
       // pathToRegexp returns a regex that matches the path, but we need to
       // convert it to a string that can be used in a header value

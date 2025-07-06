@@ -793,7 +793,7 @@ export default async function getBaseWebpackConfig(
 
   const transpilePackagesRegex = new RegExp(
     `[/\\\\]node_modules[/\\\\](${finalTranspilePackages
-      ?.map((p) => p.replace(/\//g, '[/\\\\]'))
+      ?.map((p) => escapeStringRegexp(p).replace(/\//g, '[/\\\\]'))
       .join('|')})[/\\\\]`
   )
 
@@ -805,7 +805,8 @@ export default async function getBaseWebpackConfig(
     dir,
   })
 
-  const pageExtensionsRegex = new RegExp(`\\.(${pageExtensions.join('|')})$`)
+  const sanitizedPageExtensions = pageExtensions.map((ext) => escapeStringRegexp(ext));
+  const pageExtensionsRegex = new RegExp(`\\.(${sanitizedPageExtensions.join('|')})$`);
 
   const aliasCodeConditionTest = [codeCondition.test, pageExtensionsRegex]
 

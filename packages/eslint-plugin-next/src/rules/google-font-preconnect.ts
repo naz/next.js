@@ -33,7 +33,14 @@ export = defineRule({
 
         if (
           typeof hrefValue === 'string' &&
-          hrefValue.startsWith('https://fonts.gstatic.com') &&
+          (() => {
+            try {
+              const parsedUrl = new URL(hrefValue);
+              return parsedUrl.host === 'fonts.gstatic.com';
+            } catch {
+              return false;
+            }
+          })() &&
           preconnectMissing
         ) {
           context.report({

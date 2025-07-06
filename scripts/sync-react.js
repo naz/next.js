@@ -21,6 +21,15 @@ const pullRequestReviewers = ['eps1lon']
  */
 const pagesRouterReact = '^19.0.0'
 
+/**
+ * Validates whether a given string is a valid Git SHA (40-character hexadecimal string).
+ * @param {string} sha
+ * @returns {boolean}
+ */
+function isValidGitSha(sha) {
+  return /^[a-f0-9]{40}$/.test(sha)
+}
+
 const defaultLatestChannel = 'canary'
 const filesReferencingReactPeerDependencyVersion = [
   'run-tests.js',
@@ -127,6 +136,12 @@ function extractInfoFromReactVersion(reactVersion) {
 async function getChangelogFromGitHub(baseSha, newSha) {
   const pageSize = 50
   let changelog = []
+
+  // Validate baseSha and newSha to ensure they are valid Git commit hashes
+  if (!isValidGitSha(baseSha) || !isValidGitSha(newSha)) {
+    throw new Error(`Invalid Git SHA: baseSha=${baseSha}, newSha=${newSha}`)
+  }
+
   for (let currentPage = 1; ; currentPage++) {
     const url = `https://api.github.com/repos/facebook/react/compare/${baseSha}...${newSha}?per_page=${pageSize}&page=${currentPage}`
     const headers = {}

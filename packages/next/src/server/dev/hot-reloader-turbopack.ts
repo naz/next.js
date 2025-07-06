@@ -2,7 +2,7 @@ import type { Socket } from 'net'
 import { mkdir, writeFile } from 'fs/promises'
 import { join, extname } from 'path'
 import { pathToFileURL } from 'url'
-
+import crypto from 'crypto'
 import ws from 'next/dist/compiled/ws'
 
 import type { OutputState } from '../../build/output/store'
@@ -101,7 +101,7 @@ const isTestMode = !!(
   process.env.DEBUG
 )
 
-const sessionId = Math.floor(Number.MAX_SAFE_INTEGER * Math.random())
+const sessionId = crypto.randomInt(0, Number.MAX_SAFE_INTEGER)
 
 /**
  * Replaces turbopack://[project] with the specified project in the `source` field.

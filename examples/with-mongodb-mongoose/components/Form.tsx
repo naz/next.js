@@ -49,6 +49,12 @@ const Form = ({ formId, petForm, forNewPet = true }: Props) => {
   const putData = async (form: FormData) => {
     const { id } = router.query;
 
+    // Validate the `id` parameter
+    if (!isValidId(id)) {
+      setMessage("Invalid pet ID");
+      return;
+    }
+
     try {
       const res = await fetch(`/api/pets/${id}`, {
         method: "PUT",
@@ -227,6 +233,14 @@ const Form = ({ formId, petForm, forNewPet = true }: Props) => {
       </div>
     </>
   );
+
+// Function to validate the `id` parameter
+const isValidId = (id: any): boolean => {
+  // Example validation: Check if `id` is a non-empty string and matches a specific pattern
+  const idPattern = /^[a-fA-F0-9]{24}$/; // MongoDB ObjectId format
+  return typeof id === "string" && idPattern.test(id);
+};
+
 };
 
 export default Form;

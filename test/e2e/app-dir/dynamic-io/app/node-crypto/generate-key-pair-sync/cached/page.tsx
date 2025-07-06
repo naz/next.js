@@ -27,7 +27,7 @@ export default async function Page() {
 async function getGeneratedKeyPair(_nonce: number) {
   'use cache'
   return crypto.generateKeyPairSync('rsa', {
-    modulusLength: 512,
+    modulusLength: 2048,
     publicKeyEncoding: {
       type: 'spki',
       format: 'pem',

@@ -28,7 +28,8 @@ export default function ({ hasProps, preview, previewData, random }) {
       <button
         id="reload-props"
         onClick={async () => {
-          await router.replace(router.asPath)
+          const sanitizedPath = encodeURIComponent(router.asPath)
+          await router.replace(sanitizedPath)
           setReloaded(true)
         }}
       >

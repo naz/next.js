@@ -9,8 +9,9 @@ describe('experimental-https-server (provided certificate)', () => {
       shouldRunTurboDevTest() ? 'dev --turbo' : 'dev'
     } --experimental-https --experimental-https-key ./certificates/localhost-key.pem --experimental-https-cert ./certificates/localhost.pem`,
   })
+  // Use rejectUnauthorized: false only in test environments to allow self-signed certificates
   const agent = new https.Agent({
-    rejectUnauthorized: false,
+    rejectUnauthorized: process.env.NODE_ENV === 'test' ? false : true,
   })
 
   it('should successfully load the app in app dir', async () => {

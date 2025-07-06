@@ -55,7 +55,12 @@ type ReadyErrorEvent = ReadyRuntimeError
 type DisplayState = 'minimized' | 'fullscreen' | 'hidden'
 
 function isNextjsLink(text: string): boolean {
-  return text.startsWith('https://nextjs.org')
+  try {
+    const url = new URL(text);
+    return url.hostname === 'nextjs.org' || url.hostname.endsWith('.nextjs.org');
+  } catch {
+    return false; // Return false if the URL is invalid
+  }
 }
 
 function ErrorDescription({

@@ -46,6 +46,15 @@ import { handleSmoothScroll } from './utils/handle-smooth-scroll'
 import type { Params } from '../../../server/request/params'
 import { MATCHED_PATH_HEADER } from '../../../lib/constants'
 
+function sanitizeURL(url: string): string {
+  const parser = document.createElement('a');
+  parser.href = url;
+  if (parser.protocol === 'http:' || parser.protocol === 'https:') {
+    return parser.href;
+  }
+  throw new Error(`Invalid URL protocol: ${parser.protocol}`);
+}
+
 declare global {
   interface Window {
     /* prod */
@@ -632,7 +641,7 @@ function handleHardNavigation({
       `Invariant: attempted to hard navigate to the same URL ${url} ${location.href}`
     )
   }
-  window.location.href = url
+  window.location.href = sanitizeURL(url)
 }
 
 const getCancelledHandler = ({

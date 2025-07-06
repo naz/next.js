@@ -186,9 +186,29 @@ module.exports = class EvalSourceMapDevToolPlugin {
             }
             const footer = `${this.sourceMapComment.replace(/\[url\]/g, `data:application/json;charset=utf-8;base64,${Buffer.from(JSON.stringify(sourceMap), 'utf8').toString('base64')}`)}\n//# sourceURL=webpack-internal:///${moduleId}\n` // workaround for chrome bug
 
+            const escapeUnsafeChars = (str) => {
+              const charMap = {
+                '<': '\\u003C',
+                '>': '\\u003E',
+                '/': '\\u002F',
+                '\\': '\\\\',
+                '\b': '\\b',
+                '\f': '\\f',
+                '\n': '\\n',
+                '\r': '\\r',
+                '\t': '\\t',
+                '\0': '\\0',
+                '\u2028': '\\u2028',
+                '\u2029': '\\u2029'
+              };
+              return str.replace(/[<>\b\f\n\r\t\0\u2028\u2029]/g, x => charMap[x]);
+            };
+
+            const sanitizedContent = escapeUnsafeChars(content + footer);
+
             return result(
               new RawSource(
-                `eval(${compilation.outputOptions.trustedTypes ? `${RuntimeGlobals.createScript}(${JSON.stringify(content + footer)})` : JSON.stringify(content + footer)});`
+                `eval(${compilation.outputOptions.trustedTypes ? `${RuntimeGlobals.createScript}(${JSON.stringify(sanitizedContent)})` : JSON.stringify(sanitizedContent)});`
               )
             )
           }
